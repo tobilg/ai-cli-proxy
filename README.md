@@ -49,7 +49,6 @@ Download the appropriate binary for your platform from the `dist/` directory aft
 |----------|--------|
 | Windows | `ai-cli-proxy-windows-amd64.exe` |
 | Linux | `ai-cli-proxy-linux-amd64` |
-| macOS (Intel) | `ai-cli-proxy-darwin-amd64` |
 | macOS (Apple Silicon) | `ai-cli-proxy-darwin-arm64` |
 
 ## Usage
@@ -94,7 +93,7 @@ AI_CLI_PROXY_PORT=8080 ./dist/ai-cli-proxy
 AI_CLI_PROXY_ALLOWED_ORIGIN="http://localhost:3000" ./dist/ai-cli-proxy
 ```
 
-The proxy will start and display:
+The proxy will start and display (with default settings):
 
 ```
 AI CLI Proxy active at http://localhost:4000
