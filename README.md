@@ -9,19 +9,19 @@ This proxy allows browser-based applications (like [sql-workbench.com](https://s
 ### How It Works
 
 ```
-┌─────────────────┐     HTTP POST      ┌─────────────────┐     exec      ┌─────────────────────┐
-│   Web Browser   │ ─────────────────► │  ai-cli-proxy   │ ────────────► │    AI CLI           │
-│ (sql-workbench) │ ◄───────────────── │  localhost:4000 │ ◄──────────── │ (claude/gemini/...) │
-└─────────────────┘     SQL Response   └─────────────────┘    Response   └─────────────────────┘
+┌─────────────────┐     HTTP POST      ┌─────────────────┐     exec      ┌───────────────┐
+│   Web Browser   │ ─────────────────► │  ai-cli-proxy   │ ────────────► │    AI CLI     │
+│ (sql-workbench) │ ◄───────────────── │  localhost:4000 │ ◄──────────── │ (claude/etc.) │
+└─────────────────┘     SQL Response   └─────────────────┘    Response   └───────────────┘
 ```
 
 ### Supported Providers
 
-| Provider | CLI Command | Install |
-|----------|-------------|---------|
-| Claude | `claude` | [Installation Guide](https://docs.anthropic.com/en/docs/claude-cli) |
-| Gemini | `gemini` | [Installation Guide](https://geminicli.com/docs/installation) |
-| Codex | `codex` | [Installation Guide](https://developers.openai.com/codex/cli/installation) |
+| Provider    | CLI Command | Install |
+|-------------|-------------|---------|
+| Claude Code | `claude` | [Installation Guide](https://docs.anthropic.com/en/docs/claude-cli) |
+| Google Gemini | `gemini` | [Installation Guide](https://geminicli.com/docs/installation) |
+| OpenAI Codex | `codex` | [Installation Guide](https://developers.openai.com/codex/cli/installation) |
 | Continue | `cn` | `npm i -g @continuedev/cli` |
 | OpenCode | `opencode` | [Installation Guide](https://opencode.ai/docs/cli) |
 
@@ -172,11 +172,11 @@ curl http://localhost:4000/providers
 ```json
 {
   "providers": [
-    {"name": "claude", "description": "Anthropic Claude CLI"},
-    {"name": "gemini", "description": "Google Gemini CLI"},
-    {"name": "codex", "description": "OpenAI Codex CLI"},
-    {"name": "continue", "description": "Continue CLI"},
-    {"name": "opencode", "description": "OpenCode CLI"}
+    {"name": "claude", "description": "Claude Code"},
+    {"name": "gemini", "description": "Google Gemini"},
+    {"name": "codex", "description": "OpenAI Codex"},
+    {"name": "continue", "description": "Continue"},
+    {"name": "opencode", "description": "OpenCode"}
   ]
 }
 ```
