@@ -156,6 +156,28 @@ const OpenAPISpec = `{
           }
         }
       }
+    },
+    "/providers": {
+      "get": {
+        "summary": "List Providers",
+        "description": "Returns the list of available AI providers.",
+        "operationId": "listProviders",
+        "responses": {
+          "200": {
+            "description": "List of available providers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProvidersResponse"
+                },
+                "example": {
+                  "providers": ["claude", "gemini", "codex", "continue", "opencode"]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -203,6 +225,19 @@ const OpenAPISpec = `{
             "type": "string",
             "description": "Error message describing what went wrong",
             "example": "Failed to generate SQL"
+          }
+        }
+      },
+      "ProvidersResponse": {
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of available AI provider names",
+            "example": ["claude", "gemini", "codex", "continue", "opencode"]
           }
         }
       }

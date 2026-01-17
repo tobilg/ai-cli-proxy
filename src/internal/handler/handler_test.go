@@ -252,3 +252,48 @@ func TestHandleGenerateSQL_UnknownProvider(t *testing.T) {
 		t.Errorf("expected 'Unknown provider: unknown', got %q", resp.Error)
 	}
 }
+
+func TestHandleProviders_Success(t *testing.T) {
+	providers := map[string]provider.SQLGenerator{
+		"claude": &mockSQLGenerator{},
+		"gemini": &mockSQLGenerator{},
+	}
+	handler := newTestHandlerWithProviders(providers, "claude")
+
+	req := httptest.NewRequest(http.MethodGet, "/providers", nil)
+	w := httptest.NewRecorder()
+
+	handler.HandleProviders(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected status 200, got %d", w.Code)
+	}
+
+	if ct := w.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("expected Content-Type application/json, got %q", ct)
+	}
+
+	var resp struct {
+		Providers []string `json:"providers"`
+	}
+	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+
+	if len(resp.Providers) != 2 {
+		t.Errorf("expected 2 providers, got %d", len(resp.Providers))
+	}
+}
+
+func TestHandleProviders_MethodNotAllowed(t *testing.T) {
+	handler := newTestHandler(&mockSQLGenerator{})
+
+	req := httptest.NewRequest(http.MethodPost, "/providers", nil)
+	w := httptest.NewRecorder()
+
+	handler.HandleProviders(w, req)
+
+	if w.Code != http.StatusMethodNotAllowed {
+		t.Errorf("expected status 405, got %d", w.Code)
+	}
+}

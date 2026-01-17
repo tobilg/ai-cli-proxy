@@ -124,6 +124,24 @@ Returns the OpenAPI v3 specification for this API.
 curl http://localhost:4000/openapi.json
 ```
 
+### GET /providers
+
+Returns the list of available AI providers.
+
+**Response:**
+
+```json
+{
+  "providers": ["claude", "gemini", "codex", "continue", "opencode"]
+}
+```
+
+**Example:**
+
+```bash
+curl http://localhost:4000/providers
+```
+
 ### POST /generate-sql
 
 Generate a DuckDB SQL query from a schema and natural language question.

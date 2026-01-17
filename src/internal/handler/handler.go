@@ -111,3 +111,21 @@ func (h *Handler) sendJSON(w http.ResponseWriter, response SQLResponse) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
+
+// HandleProviders handles GET /providers requests.
+func (h *Handler) HandleProviders(w http.ResponseWriter, r *http.Request) {
+	h.setCORSHeaders(w)
+
+	if r.Method != http.MethodGet {
+		h.sendError(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	providers := make([]string, 0, len(h.providers))
+	for name := range h.providers {
+		providers = append(providers, name)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string][]string{"providers": providers})
+}
