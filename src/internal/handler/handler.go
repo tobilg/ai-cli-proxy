@@ -129,6 +129,13 @@ func (h *Handler) sendJSON(w http.ResponseWriter, response SQLResponse) {
 
 // HandleHealth handles GET /health requests for health checks.
 func (h *Handler) HandleHealth(w http.ResponseWriter, r *http.Request) {
+	h.setCORSHeaders(w)
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -139,6 +146,11 @@ func (h *Handler) HandleHealth(w http.ResponseWriter, r *http.Request) {
 // HandleProviders handles GET /providers requests.
 func (h *Handler) HandleProviders(w http.ResponseWriter, r *http.Request) {
 	h.setCORSHeaders(w)
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
 	if r.Method != http.MethodGet {
 		h.sendError(w, "Method not allowed", http.StatusMethodNotAllowed)

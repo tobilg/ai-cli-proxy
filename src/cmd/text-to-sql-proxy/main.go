@@ -64,15 +64,29 @@ func main() {
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		fmt.Printf("Text-to-SQL Proxy active at http://localhost:%d\n", cfg.Port)
+		protocol := "http"
+		if cfg.TLSEnabled() {
+			protocol = "https"
+		}
+
+		fmt.Printf("Text-to-SQL Proxy active at %s://localhost:%d\n", protocol, cfg.Port)
 		fmt.Printf("Default provider: %s\n", cfg.Provider)
 		fmt.Printf("Target database: %s\n", cfg.Database)
 		fmt.Printf("Allowed origin: %s\n", cfg.AllowedOrigin)
+		if cfg.TLSEnabled() {
+			fmt.Printf("TLS enabled: cert=%s, key=%s\n", cfg.TLSCert, cfg.TLSKey)
+		}
 		fmt.Println("Available providers: claude, gemini, codex, continue, opencode")
-		fmt.Printf("API docs: http://localhost:%d/openapi.json\n", cfg.Port)
+		fmt.Printf("API docs: %s://localhost:%d/openapi.json\n", protocol, cfg.Port)
 		fmt.Println("Press Ctrl+C to stop")
 
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		var err error
+		if cfg.TLSEnabled() {
+			err = server.ListenAndServeTLS(cfg.TLSCert, cfg.TLSKey)
+		} else {
+			err = server.ListenAndServe()
+		}
+		if err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Server error: %v", err)
 		}
 	}()

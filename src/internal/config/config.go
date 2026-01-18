@@ -18,6 +18,13 @@ type Config struct {
 	AllowedOrigin string
 	Provider      string
 	Database      string
+	TLSCert       string
+	TLSKey        string
+}
+
+// TLSEnabled returns true if both TLS cert and key are configured.
+func (c Config) TLSEnabled() bool {
+	return c.TLSCert != "" && c.TLSKey != ""
 }
 
 // Load loads configuration from environment variables with sensible defaults.
@@ -46,6 +53,9 @@ func Load() Config {
 	if database := os.Getenv("TEXT_TO_SQL_PROXY_DATABASE"); database != "" {
 		cfg.Database = database
 	}
+
+	cfg.TLSCert = os.Getenv("TEXT_TO_SQL_PROXY_TLS_CERT")
+	cfg.TLSKey = os.Getenv("TEXT_TO_SQL_PROXY_TLS_KEY")
 
 	return cfg
 }

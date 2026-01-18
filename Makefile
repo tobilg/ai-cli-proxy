@@ -7,7 +7,7 @@ COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BUILD_DATE ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS = -ldflags "-X main.Version=$(VERSION) -X main.Commit=$(COMMIT) -X main.BuildDate=$(BUILD_DATE)"
 
-.PHONY: all build build-all build-windows build-linux build-darwin-arm64 test clean
+.PHONY: all build build-all build-windows build-linux build-darwin-arm64 test clean run
 
 all: test build
 
@@ -35,3 +35,6 @@ test:
 clean:
 	rm -rf $(DIST_DIR)
 	go clean
+
+run: build
+	TEXT_TO_SQL_PROXY_TLS_CERT=~/localhost+2.pem TEXT_TO_SQL_PROXY_TLS_KEY=~/localhost+2-key.pem ./$(DIST_DIR)/$(BINARY_NAME)

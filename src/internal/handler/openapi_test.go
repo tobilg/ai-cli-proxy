@@ -126,7 +126,25 @@ func TestHandleOpenAPI_AllowsCORS(t *testing.T) {
 	handler.HandleOpenAPI(w, req)
 
 	cors := w.Header().Get("Access-Control-Allow-Origin")
-	if cors != "*" {
-		t.Errorf("expected CORS header '*', got %q", cors)
+	if cors != "https://sql-workbench.com" {
+		t.Errorf("expected CORS header 'https://sql-workbench.com', got %q", cors)
+	}
+}
+
+func TestHandleOpenAPI_OptionsRequest(t *testing.T) {
+	handler := newTestHandler(&mockSQLGenerator{})
+
+	req := httptest.NewRequest(http.MethodOptions, "/openapi.json", nil)
+	w := httptest.NewRecorder()
+
+	handler.HandleOpenAPI(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected status 200, got %d", w.Code)
+	}
+
+	cors := w.Header().Get("Access-Control-Allow-Origin")
+	if cors != "https://sql-workbench.com" {
+		t.Errorf("expected CORS header 'https://sql-workbench.com', got %q", cors)
 	}
 }

@@ -94,6 +94,9 @@ TEXT_TO_SQL_PROXY_ALLOWED_ORIGIN="http://localhost:3000" ./dist/text-to-sql-prox
 
 # Run with a different target database (e.g., PostgreSQL)
 TEXT_TO_SQL_PROXY_DATABASE=PostgreSQL ./dist/text-to-sql-proxy
+
+# Run with HTTPS/TLS (requires certificate and key files)
+TEXT_TO_SQL_PROXY_TLS_CERT=/path/to/cert.pem TEXT_TO_SQL_PROXY_TLS_KEY=/path/to/key.pem ./dist/text-to-sql-proxy
 ```
 
 The proxy will start and display (with default settings):
@@ -116,8 +119,31 @@ Press Ctrl+C to stop
 | `TEXT_TO_SQL_PROXY_ALLOWED_ORIGIN` | `https://sql-workbench.com` | CORS allowed origin |
 | `TEXT_TO_SQL_PROXY_PROVIDER` | `claude` | Default AI provider |
 | `TEXT_TO_SQL_PROXY_DATABASE` | `DuckDB` | Target database for SQL generation |
+| `TEXT_TO_SQL_PROXY_TLS_CERT` | - | Path to TLS certificate file (enables HTTPS) |
+| `TEXT_TO_SQL_PROXY_TLS_KEY` | - | Path to TLS private key file (enables HTTPS) |
 
 Valid providers: `claude`, `gemini`, `codex`, `continue`, `opencode`
+
+### HTTPS/TLS Support
+
+To run the proxy over HTTPS (required for Safari and strict browser security), provide both TLS certificate and key files:
+
+```bash
+# Generate self-signed certificates with mkcert (recommended for local development)
+# Install mkcert: https://github.com/FiloSottile/mkcert
+mkcert -install
+mkcert localhost 127.0.0.1 ::1
+
+# Run with the generated certificates
+TEXT_TO_SQL_PROXY_TLS_CERT=localhost+2.pem TEXT_TO_SQL_PROXY_TLS_KEY=localhost+2-key.pem ./dist/text-to-sql-proxy
+```
+
+When TLS is enabled, the proxy will display:
+```
+Text-to-SQL Proxy active at https://localhost:4000
+...
+TLS enabled: cert=localhost+2.pem, key=localhost+2-key.pem
+```
 
 ## API
 
@@ -289,8 +315,11 @@ Modern browsers enforce strict security policies for requests from HTTPS sites t
 
 - **CORS headers** for cross-origin requests
 - **Private Network Access** header (`Access-Control-Allow-Private-Network: true`) for browser compatibility
+- **Optional HTTPS/TLS support** for browsers with strict mixed content policies (like Safari)
 
-If you encounter connection issues, you may need to enable `chrome://flags/#allow-insecure-localhost` in Chrome-based browsers.
+**Recommended:** Use HTTPS with [mkcert](https://github.com/FiloSottile/mkcert) for the best browser compatibility (see [HTTPS/TLS Support](#httpstls-support)).
+
+**Alternative for Chrome:** Enable `chrome://flags/#allow-insecure-localhost` to allow HTTP connections to localhost.
 
 ## License
 

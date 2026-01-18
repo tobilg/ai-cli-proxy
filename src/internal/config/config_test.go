@@ -11,6 +11,8 @@ func TestLoad_Defaults(t *testing.T) {
 	os.Unsetenv("TEXT_TO_SQL_PROXY_ALLOWED_ORIGIN")
 	os.Unsetenv("TEXT_TO_SQL_PROXY_PROVIDER")
 	os.Unsetenv("TEXT_TO_SQL_PROXY_DATABASE")
+	os.Unsetenv("TEXT_TO_SQL_PROXY_TLS_CERT")
+	os.Unsetenv("TEXT_TO_SQL_PROXY_TLS_KEY")
 
 	cfg := Load()
 
@@ -25,6 +27,15 @@ func TestLoad_Defaults(t *testing.T) {
 	}
 	if cfg.Database != "DuckDB" {
 		t.Errorf("expected default database DuckDB, got %s", cfg.Database)
+	}
+	if cfg.TLSCert != "" {
+		t.Errorf("expected empty TLS cert, got %s", cfg.TLSCert)
+	}
+	if cfg.TLSKey != "" {
+		t.Errorf("expected empty TLS key, got %s", cfg.TLSKey)
+	}
+	if cfg.TLSEnabled() {
+		t.Error("expected TLS to be disabled by default")
 	}
 }
 
@@ -128,5 +139,47 @@ func TestLoad_AllCustomValues(t *testing.T) {
 	}
 	if cfg.Database != "MySQL" {
 		t.Errorf("expected database MySQL, got %s", cfg.Database)
+	}
+}
+
+func TestLoad_TLSConfig(t *testing.T) {
+	os.Setenv("TEXT_TO_SQL_PROXY_TLS_CERT", "/path/to/cert.pem")
+	os.Setenv("TEXT_TO_SQL_PROXY_TLS_KEY", "/path/to/key.pem")
+	defer func() {
+		os.Unsetenv("TEXT_TO_SQL_PROXY_TLS_CERT")
+		os.Unsetenv("TEXT_TO_SQL_PROXY_TLS_KEY")
+	}()
+
+	cfg := Load()
+
+	if cfg.TLSCert != "/path/to/cert.pem" {
+		t.Errorf("expected TLS cert /path/to/cert.pem, got %s", cfg.TLSCert)
+	}
+	if cfg.TLSKey != "/path/to/key.pem" {
+		t.Errorf("expected TLS key /path/to/key.pem, got %s", cfg.TLSKey)
+	}
+	if !cfg.TLSEnabled() {
+		t.Error("expected TLS to be enabled when both cert and key are set")
+	}
+}
+
+func TestTLSEnabled_OnlyCert(t *testing.T) {
+	cfg := Config{TLSCert: "/path/to/cert.pem", TLSKey: ""}
+	if cfg.TLSEnabled() {
+		t.Error("TLS should not be enabled with only cert")
+	}
+}
+
+func TestTLSEnabled_OnlyKey(t *testing.T) {
+	cfg := Config{TLSCert: "", TLSKey: "/path/to/key.pem"}
+	if cfg.TLSEnabled() {
+		t.Error("TLS should not be enabled with only key")
+	}
+}
+
+func TestTLSEnabled_BothSet(t *testing.T) {
+	cfg := Config{TLSCert: "/path/to/cert.pem", TLSKey: "/path/to/key.pem"}
+	if !cfg.TLSEnabled() {
+		t.Error("TLS should be enabled when both cert and key are set")
 	}
 }

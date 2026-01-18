@@ -279,7 +279,13 @@ const OpenAPISpec = `{
 
 // HandleOpenAPI serves the OpenAPI v3 specification.
 func (h *Handler) HandleOpenAPI(w http.ResponseWriter, r *http.Request) {
+	h.setCORSHeaders(w)
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write([]byte(OpenAPISpec))
 }

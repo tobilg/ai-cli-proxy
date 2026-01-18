@@ -41,6 +41,10 @@ Provider implementations call external CLI binaries via `os/exec` and parse thei
 - `TEXT_TO_SQL_PROXY_ALLOWED_ORIGIN` (default: https://sql-workbench.com)
 - `TEXT_TO_SQL_PROXY_PROVIDER` (default: claude)
 - `TEXT_TO_SQL_PROXY_DATABASE` (default: DuckDB)
+- `TEXT_TO_SQL_PROXY_TLS_CERT` (optional: path to TLS certificate file)
+- `TEXT_TO_SQL_PROXY_TLS_KEY` (optional: path to TLS private key file)
+
+When both TLS cert and key are provided, the server runs over HTTPS instead of HTTP.
 
 ## Adding a New Provider
 
